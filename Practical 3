@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Result Management System</title>
+<style>
+  :root{
+    --navy:#123B6D;
+    --navy-dark:#0B274A;
+    --blue:#3E7CB1;
+    --blue-light:#EAF2FA;
+    --grey-line:#D7E1EA;
+    --text:#243447;
+    --muted:#6B7C93;
+    --white:#FFFFFF;
+    --pass:#1E7A46;
+    --fail:#B23A3A;
+    --warn:#B2731E;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  body{
+    font-family: "Segoe UI", Arial, sans-serif;
+    background:#F4F7FA;
+    color:var(--text);
+    line-height:1.5;
+    padding-bottom:60px;
+  }
+
+  /* ---------- Header / Letterhead ---------- */
+  header.portal-header{
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-dark) 100%);
+    color:var(--white);
+    padding:22px 30px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    border-bottom:4px solid var(--blue);
+  }
+
+  .college-seal{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background:var(--white);
+    border:2px solid var(--blue-light);
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    color:var(--navy);
+    font-size:12px;
+    text-align:center;
+    line-height:1.1;
+  }
+
+  .header-text h1{
+    font-size:22px;
+    letter-spacing:0.5px;
+  }
+  .header-text p{
+    font-size:13px;
+    color:#C9D9EA;
+    margin-top:2px;
+  }
+
+  nav.sub-bar{
+    background:var(--blue);
+    color:var(--white);
+    padding:8px 30px;
+    font-size:13px;
+    letter-spacing:0.5px;
+  }
+
+  /* ---------- Layout ---------- */
+  main{
+    max-width:900px;
+    margin:30px auto;
+    padding:0 20px;
+  }
+
+  .card{
+    background:var(--white);
+    border:1px solid var(--grey-line);
+    border-radius:6px;
+    padding:26px 30px;
+    margin-bottom:26px;
+    box-shadow:0 1px 3px rgba(18,59,109,0.06);
+  }
+
+  .card h2{
+    font-size:16px;
+    color:var(--navy);
+    border-bottom:2px solid var(--blue-light);
+    padding-bottom:10px;
+    margin-bottom:20px;
+    letter-spacing:0.3px;
+  }
+
+  .form-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:18px 24px;
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .field.full{
+    grid-column: 1 / -1;
+  }
+
+  label{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--navy);
+    margin-bottom:6px;
+  }
+
+  input, select{
+    padding:9px 11px;
+    border:1px solid #BCCBDA;
+    border-radius:4px;
+    font-size:14px;
+    color:var(--text);
+    background:var(--white);
+    outline:none;
+  }
+
+  input:focus, select:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 3px rgba(62,124,177,0.15);
+  }
+
+  .error-msg{
+    color:var(--fail);
+    font-size:11.5px;
+    margin-top:4px;
+    min-height:14px;
+  }
+
+  input.invalid{
+    border-color:var(--fail);
+    background:#FDF4F4;
+  }
+
+  .marks-table-wrap{
+    margin-top:6px;
+    overflow-x:auto;
+  }
+
+  table.marks-input{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+  }
+
+  table.marks-input th{
+    background:var(--blue-light);
+    color:var(--navy);
+    text-align:left;
+    padding:10px 12px;
+    font-size:12.5px;
+    letter-spacing:0.3px;
+    border:1px solid var(--grey-line);
+  }
+
+  table.marks-input td{
+    padding:8px 12px;
+    border:1px solid var(--grey-line);
+  }
+
+  table.marks-input input{
+    width:90px;
+  }
+
+  .btn-row{
+    display:flex;
+    gap:14px;
+    margin-top:24px;
+  }
+
+  button{
+    cursor:pointer;
+    border:none;
+    border-radius:4px;
+    padding:11px 22px;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:0.3px;
+  }
+
+  .btn-primary{
+    background:var(--navy);
+    color:var(--white);
+  }
+  .btn-primary:hover{ background:var(--navy-dark); }
+
+  .btn-secondary{
+    background:var(--white);
+    color:var(--navy);
+    border:1px solid var(--navy);
+  }
+  .btn-secondary:hover{ background:var(--blue-light); }
+
+  .btn-print{
+    background:var(--blue);
+    color:var(--white);
+  }
+  .btn-print:hover{ background:#33689a; }
+
+  /* ---------- Report Card ---------- */
+  #reportSection{ display:none; }
+
+  .report-head{
+    text-align:center;
+    border-bottom:2px solid var(--navy);
+    padding-bottom:14px;
+    margin-bottom:20px;
+  }
+
+  .report-head h2{
+    border:none;
+    color:var(--navy);
+    font-size:19px;
+    margin-bottom:4px;
+    padding:0;
+  }
+  .report-head p{
+    font-size:12.5px;
+    color:var(--muted);
+  }
+
+  .student-info-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px 30px;
+    font-size:13.5px;
+    margin-bottom:22px;
+    background:var(--blue-light);
+    padding:14px 18px;
+    border-radius:4px;
+  }
+
+  .student-info-grid span.label{
+    color:var(--muted);
+    font-weight:600;
+    display:inline-block;
+    width:110px;
+  }
+
+  table.report-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+    margin-bottom:22px;
+  }
+
+  table.report-table th{
+    background:var(--navy);
+    color:var(--white);
+    padding:10px 12px;
+    text-align:left;
+    font-size:12.5px;
+    letter-spacing:0.3px;
+  }
+
+  table.report-table td{
+    padding:9px 12px;
+    border-bottom:1px solid var(--grey-line);
+  }
+
+  table.report-table tr:nth-child(even){
+    background:#FAFBFC;
+  }
+
+  table.report-table td.num, table.report-table th.num{
+    text-align:center;
+  }
+
+  tr.total-row td{
+    font-weight:700;
+    border-top:2px solid var(--navy);
+    background:var(--blue-light);
+  }
+
+  .summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:14px;
+    margin-bottom:22px;
+  }
+
+  .summary-box{
+    background:var(--blue-light);
+    border:1px solid var(--grey-line);
+    border-radius:5px;
+    padding:14px;
+    text-align:center;
+  }
+
+  .summary-box .val{
+    font-size:20px;
+    font-weight:700;
+    color:var(--navy);
+  }
+  .summary-box .lab{
+    font-size:11.5px;
+    color:var(--muted);
+    margin-top:3px;
+    letter-spacing:0.3px;
+  }
+
+  .result-banner{
+    text-align:center;
+    padding:14px;
+    border-radius:5px;
+    font-size:16px;
+    font-weight:700;
+    letter-spacing:0.5px;
+    margin-bottom:22px;
+  }
+
+  .result-pass{ background:#E7F5EC; color:var(--pass); border:1px solid #BEE3C9; }
+  .result-fail{ background:#FBEAEA; color:var(--fail); border:1px solid #F0C3C3; }
+
+  .remark-box{
+    font-size:13px;
+    color:var(--muted);
+    text-align:center;
+    margin-bottom:20px;
+  }
+
+  footer.report-footer{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:var(--muted);
+    border-top:1px solid var(--grey-line);
+    padding-top:12px;
+  }
+
+  /* ---------- Print styles ---------- */
+  @media print{
+    header.portal-header, nav.sub-bar, #inputCard, .btn-row, .no-print{
+      display:none !important;
+    }
+    body{ background:var(--white); padding:0; }
+    main{ max-width:100%; margin:0; padding:0; }
+    .card{ box-shadow:none; border:none; }
+    #reportSection{ display:block !important; }
+  }
+
+  @media (max-width: 640px){
+    .form-grid{ grid-template-columns:1fr; }
+    .summary-grid{ grid-template-columns:1fr 1fr; }
+    .student-info-grid{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="portal-header">
+  <div class="college-seal">COLLEGE<br>SEAL</div>
+  <div class="header-text">
+    <h1>SYMBIOSIS INSTITUTE OF TECHNOLOGY, NAGPUR</h1>
+    <p>Office of the Controller of Examinations &mdash; Result Management Portal</p>
+  </div>
+</header>
+<nav class="sub-bar">Home &nbsp;›&nbsp; Examinations &nbsp;›&nbsp; Semester Result Generation</nav>
+
+<main>
+
+  <!-- ===================== INPUT FORM ===================== -->
+  <section class="card" id="inputCard">
+    <h2>Student &amp; Examination Details</h2>
+    <form id="resultForm" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label for="studentName">Student Full Name</label>
+          <input type="text" id="studentName" placeholder="e.g. Aarav Sharma">
+          <div class="error-msg" id="err-studentName"></div>
+        </div>
+        <div class="field">
+          <label for="rollNo">Roll Number</label>
+          <input type="text" id="rollNo" placeholder="e.g. CS2024017">
+          <div class="error-msg" id="err-rollNo"></div>
+        </div>
+        <div class="field">
+          <label for="courseName">Course / Branch</label>
+          <input type="text" id="courseName" placeholder="e.g. B.Sc. Computer Science">
+          <div class="error-msg" id="err-courseName"></div>
+        </div>
+        <div class="field">
+          <label for="semester">Semester</label>
+          <select id="semester">
+            <option value="">-- Select Semester --</option>
+            <option>Semester I</option>
+            <option>Semester II</option>
+            <option>Semester III</option>
+            <option>Semester IV</option>
+            <option>Semester V</option>
+            <option>Semester VI</option>
+          </select>
+          <div class="error-msg" id="err-semester"></div>
+        </div>
+      </div>
+
+      <div class="marks-table-wrap">
+        <table class="marks-input">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Marks Obtained (out of 60)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Subject 1 &mdash; Mathematics</td>
+              <td><input type="number" id="m1" min="0" max="60" placeholder="0-60"><div class="error-msg" id="err-m1"></div></td>
+            </tr>
+            <tr>
+              <td>Subject 2 &mdash; Physics</td>
+              <td><input type="number" id="m2" min="0" max="60" placeholder="0-60"><div class="error-msg" id="err-m2"></div></td>
+            </tr>
+            <tr>
+              <td>Subject 3 &mdash; Chemistry</td>
+              <td><input type="number" id="m3" min="0" max="60" placeholder="0-60"><div class="error-msg" id="err-m3"></div></td>
+            </tr>
+            <tr>
+              <td>Subject 4 &mdash; Computer Science</td>
+              <td><input type="number" id="m4" min="0" max="60" placeholder="0-60"><div class="error-msg" id="err-m4"></div></td>
+            </tr>
+            <tr>
+              <td>Subject 5 &mdash; English</td>
+              <td><input type="number" id="m5" min="0" max="60" placeholder="0-60"><div class="error-msg" id="err-m5"></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="btn-row">
+        <button type="submit" class="btn-primary">Generate Report Card</button>
+        <button type="button" class="btn-secondary" id="resetBtn">Reset Form</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ===================== REPORT CARD ===================== -->
+  <section class="card" id="reportSection">
+    <div class="report-head">
+      <h2>SYMBIOSIS INSTITUTE OF TECHNOLOGY, NAGPUR</h2>
+      <p>Statement of Marks &mdash; Semester Examination Report Card</p>
+    </div>
+
+    <div class="student-info-grid">
+      <div><span class="label">Student Name:</span> <span id="rc-name"></span></div>
+      <div><span class="label">Roll Number:</span> <span id="rc-roll"></span></div>
+      <div><span class="label">Course:</span> <span id="rc-course"></span></div>
+      <div><span class="label">Semester:</span> <span id="rc-semester"></span></div>
+      <div><span class="label">Date Issued:</span> <span id="rc-date"></span></div>
+    </div>
+
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th class="num">Max Marks</th>
+          <th class="num">Marks Obtained</th>
+          <th class="num">Grade</th>
+        </tr>
+      </thead>
+      <tbody id="rc-subject-rows"></tbody>
+      <tfoot>
+        <tr class="total-row">
+          <td>Total</td>
+          <td class="num">300</td>
+          <td class="num" id="rc-total"></td>
+          <td class="num" id="rc-overall-grade"></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class="summary-grid">
+      <div class="summary-box"><div class="val" id="sum-total"></div><div class="lab">Total Marks</div></div>
+      <div class="summary-box"><div class="val" id="sum-percent"></div><div class="lab">Percentage</div></div>
+      <div class="summary-box"><div class="val" id="sum-grade"></div><div class="lab">Overall Grade</div></div>
+      <div class="summary-box"><div class="val" id="sum-performance"></div><div class="lab">Performance</div></div>
+    </div>
+
+    <div class="result-banner" id="resultBanner"></div>
+    <div class="remark-box" id="remarkBox"></div>
+
+    <div class="btn-row no-print">
+      <button type="button" class="btn-print" id="printBtn">🖨 Print Report Card</button>
+      <button type="button" class="btn-secondary" id="editBtn">Edit Details</button>
+    </div>
+
+    <footer class="report-footer">
+      <span>Controller of Examinations</span>
+      <span>This is a system-generated report card.</span>
+    </footer>
+  </section>
+
+</main>
+
+<script>
+(function(){
+
+  var subjects = [
+    { id:'m1', name:'Mathematics' },
+    { id:'m2', name:'Physics' },
+    { id:'m3', name:'Chemistry' },
+    { id:'m4', name:'Computer Science' },
+    { id:'m5', name:'English' }
+  ];
+  var MAX_PER_SUBJECT = 60;
+  var PASS_MARK_PER_SUBJECT = 21; // 35% of 60
+
+  var form = document.getElementById('resultForm');
+  var inputCard = document.getElementById('inputCard');
+  var reportSection = document.getElementById('reportSection');
+
+  function clearErrors(){
+    var msgs = document.querySelectorAll('.error-msg');
+    for (var i = 0; i < msgs.length; i++) msgs[i].textContent = '';
+    var inputs = document.querySelectorAll('input.invalid');
+    for (var j = 0; j < inputs.length; j++) inputs[j].classList.remove('invalid');
+  }
+
+  function showError(fieldId, message){
+    var errEl = document.getElementById('err-' + fieldId);
+    var inputEl = document.getElementById(fieldId);
+    if (errEl) errEl.textContent = message;
+    if (inputEl) inputEl.classList.add('invalid');
+  }
+
+  // ---- Grading logic (control structures: if / else if / else) ----
+  function gradeForMarks(marks, max){
+    var pct = (marks / max) * 100;
+    if (pct >= 90) return 'A+';
+    else if (pct >= 80) return 'A';
+    else if (pct >= 70) return 'B+';
+    else if (pct >= 60) return 'B';
+    else if (pct >= 50) return 'C';
+    else if (pct >= 35) return 'D';
+    else return 'F';
+  }
+
+  function overallPerformance(pct){
+    if (pct >= 90) return 'Outstanding';
+    else if (pct >= 75) return 'Excellent';
+    else if (pct >= 60) return 'Very Good';
+    else if (pct >= 50) return 'Good';
+    else if (pct >= 35) return 'Satisfactory';
+    else return 'Needs Improvement';
+  }
+
+  function remarkFor(pct, isFail){
+    if (isFail) return 'Student has not met the minimum passing criteria in one or more subjects. Reappear examination recommended.';
+    if (pct >= 90) return 'Exceptional academic performance. Keep up the excellent work.';
+    if (pct >= 75) return 'Strong performance across all subjects. Well done.';
+    if (pct >= 60) return 'Good, consistent performance this semester.';
+    if (pct >= 50) return 'Satisfactory performance. Room for improvement in weaker subjects.';
+    return 'Passed, but performance needs significant improvement.';
+  }
+
+  // ---- Validation ----
+  function validateForm(values){
+    var isValid = true;
+
+    if (!values.studentName || values.studentName.trim().length < 2) {
+      showError('studentName', 'Please enter a valid full name (min 2 characters).');
+      isValid = false;
+    }
+
+    var rollPattern = /^[A-Za-z0-9\-\/]{3,20}$/;
+    if (!values.rollNo || !rollPattern.test(values.rollNo.trim())) {
+      showError('rollNo', 'Enter a valid roll number (3-20 letters/numbers).');
+      isValid = false;
+    }
+
+    if (!values.courseName || values.courseName.trim().length < 2) {
+      showError('courseName', 'Please enter the course/branch name.');
+      isValid = false;
+    }
+
+    if (!values.semester) {
+      showError('semester', 'Please select a semester.');
+      isValid = false;
+    }
+
+    for (var i = 0; i < subjects.length; i++) {
+      var subj = subjects[i];
+      var raw = values[subj.id];
+
+      if (raw === '' || raw === null || raw === undefined) {
+        showError(subj.id, 'Marks required.');
+        isValid = false;
+        continue;
+      }
+
+      var num = Number(raw);
+
+      if (isNaN(num)) {
+        showError(subj.id, 'Must be a number.');
+        isValid = false;
+      } else if (num < 0 || num > MAX_PER_SUBJECT) {
+        showError(subj.id, 'Enter a value between 0 and ' + MAX_PER_SUBJECT + '.');
+        isValid = false;
+      } else if (!Number.isInteger(num)) {
+        showError(subj.id, 'Whole numbers only.');
+        isValid = false;
+      }
+    }
+
+    return isValid;
+  }
+
+  function collectValues(){
+    var values = {
+      studentName: document.getElementById('studentName').value,
+      rollNo: document.getElementById('rollNo').value,
+      courseName: document.getElementById('courseName').value,
+      semester: document.getElementById('semester').value
+    };
+    for (var i = 0; i < subjects.length; i++) {
+      values[subjects[i].id] = document.getElementById(subjects[i].id).value;
+    }
+    return values;
+  }
+
+  function buildReportCard(values){
+    var total = 0;
+    var failCount = 0;
+    var rowsHtml = '';
+
+    for (var i = 0; i < subjects.length; i++) {
+      var subj = subjects[i];
+      var marks = Number(values[subj.id]);
+      total += marks;
+
+      var subjGrade = gradeForMarks(marks, MAX_PER_SUBJECT);
+
+      if (marks < PASS_MARK_PER_SUBJECT) {
+        failCount++;
+      }
+
+      rowsHtml += '<tr>' +
+        '<td>' + subj.name + '</td>' +
+        '<td class="num">' + MAX_PER_SUBJECT + '</td>' +
+        '<td class="num">' + marks + '</td>' +
+        '<td class="num">' + subjGrade + '</td>' +
+        '</tr>';
+    }
+
+    var maxTotal = subjects.length * MAX_PER_SUBJECT;
+    var percentage = (total / maxTotal) * 100;
+    var overallGrade = gradeForMarks(total, maxTotal);
+    var isPass = (failCount === 0);
+    var performance = overallPerformance(percentage);
+    var remark = remarkFor(percentage, !isPass);
+
+    document.getElementById('rc-subject-rows').innerHTML = rowsHtml;
+    document.getElementById('rc-name').textContent = values.studentName.trim();
+    document.getElementById('rc-roll').textContent = values.rollNo.trim();
+    document.getElementById('rc-course').textContent = values.courseName.trim();
+    document.getElementById('rc-semester').textContent = values.semester;
+
+    var today = new Date();
+    document.getElementById('rc-date').textContent = today.toLocaleDateString('en-GB');
+
+    document.getElementById('rc-total').textContent = total + ' / ' + maxTotal;
+    document.getElementById('rc-overall-grade').textContent = overallGrade;
+
+    document.getElementById('sum-total').textContent = total + '/' + maxTotal;
+    document.getElementById('sum-percent').textContent = percentage.toFixed(2) + '%';
+    document.getElementById('sum-grade').textContent = overallGrade;
+    document.getElementById('sum-performance').textContent = performance;
+
+    var banner = document.getElementById('resultBanner');
+    if (isPass) {
+      banner.textContent = 'RESULT: PASS';
+      banner.className = 'result-banner result-pass';
+    } else {
+      banner.textContent = 'RESULT: FAIL (' + failCount + ' subject' + (failCount > 1 ? 's' : '') + ' below passing marks)';
+      banner.className = 'result-banner result-fail';
+    }
+
+    document.getElementById('remarkBox').textContent = remark;
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    clearErrors();
+
+    var values = collectValues();
+    var valid = validateForm(values);
+
+    if (!valid) {
+      return;
+    }
+
+    buildReportCard(values);
+
+    inputCard.style.display = 'none';
+    reportSection.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    form.reset();
+    clearErrors();
+  });
+
+  document.getElementById('editBtn').addEventListener('click', function(){
+    reportSection.style.display = 'none';
+    inputCard.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  document.getElementById('printBtn').addEventListener('click', function(){
+    window.print();
+  });
+
+})();
+</script>
+
+</body>
+</html>
