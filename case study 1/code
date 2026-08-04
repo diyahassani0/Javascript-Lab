@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Symbiosis Institute of Technology, Nagpur — Case Study</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blueprint: #0B2942;
+    --blueprint-deep: #071B2C;
+    --grid-line: rgba(255,255,255,0.09);
+    --paper: #F4F1E8;
+    --paper-line: #DAD4C2;
+    --ink: #12283F;
+    --amber: #E0982F;
+    --amber-deep: #B9791F;
+    --stamp-green: #3E6B52;
+    --muted: #5A6B7A;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  body{
+    background: var(--blueprint-deep);
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: var(--ink);
+    padding: 32px 16px 64px;
+  }
+
+  .sheet{
+    max-width: 920px;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 2px solid var(--blueprint);
+    position: relative;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.5);
+  }
+
+  /* corner registration marks — like a printer's crop marks on a drafting sheet */
+  .sheet::before, .sheet::after,
+  .corner-tl, .corner-br{
+    content:"";
+    position:absolute;
+    width: 22px; height: 22px;
+    z-index: 3;
+  }
+  .corner-tl{ top:-1px; left:-1px; border-top:3px solid var(--amber); border-left:3px solid var(--amber); }
+  .corner-br{ bottom:-1px; right:-1px; border-bottom:3px solid var(--amber); border-right:3px solid var(--amber); }
+
+  /* ===== HEADER: blueprint grid panel ===== */
+  header.hero{
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(135deg, var(--blueprint) 0%, var(--blueprint-deep) 100%);
+    background-size: 28px 28px, 28px 28px, cover;
+    padding: 46px 40px 34px;
+    color: #EAF1F7;
+    position: relative;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber);
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .eyebrow::before{
+    content:"";
+    width: 26px; height: 1px;
+    background: var(--amber);
+    display:inline-block;
+  }
+
+  h1.title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.15;
+    max-width: 640px;
+  }
+  h1.title .loc{ color: var(--amber); }
+
+  .tagline{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: #9FB4C6;
+    margin-top: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  nav.pillnav{
+    position:absolute;
+    top: 40px; right: 40px;
+    display:flex;
+    gap: 6px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }
+  nav.pillnav a{
+    color:#BFD1DE;
+    text-decoration:none;
+    padding: 6px 12px;
+    border: 1px solid rgba(255,255,255,0.18);
+    letter-spacing: 1px;
+  }
+  nav.pillnav a:hover{ border-color: var(--amber); color: var(--amber); }
+
+  /* ===== BODY ===== */
+  .content{ padding: 38px 40px 10px; }
+
+  .section-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber-deep);
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .section-label .idx{
+    background: var(--blueprint);
+    color: #fff;
+    padding: 2px 7px;
+    font-size: 10px;
+  }
+
+  section{ margin-bottom: 38px; }
+
+  .about-copy{
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    max-width: 720px;
+    margin-bottom: 16px;
+  }
+
+  ul.spec-list{
+    list-style:none;
+    border-top: 1px solid var(--paper-line);
+  }
+  ul.spec-list li{
+    padding: 11px 4px;
+    border-bottom: 1px solid var(--paper-line);
+    font-size: 14px;
+    display:flex;
+    gap: 12px;
+    align-items:baseline;
+  }
+  ul.spec-list li::before{
+    content: "▸";
+    color: var(--amber-deep);
+    font-size: 12px;
+  }
+
+  /* Departments — drafting-style spec table */
+  .dept-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--paper-line);
+    border: 1px solid var(--paper-line);
+  }
+  .dept-cell{
+    background: var(--paper);
+    padding: 18px;
+  }
+  .dept-cell .code{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--amber-deep);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    display:block;
+  }
+  .dept-cell h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-size: 16px;
+    margin-bottom: 6px;
+    color: var(--blueprint);
+  }
+  .dept-cell p{ font-size: 13px; color: var(--muted); line-height:1.5; }
+
+  /* ===== TITLE BLOCK — signature element (engineering drawing title block) ===== */
+  .titleblock-wrap{ margin-bottom: 34px; }
+  .titleblock{
+    border: 2px solid var(--blueprint);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .tb-row{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .tb-cell{
+    border-right: 1px solid var(--blueprint);
+    border-bottom: 1px solid var(--blueprint);
+    padding: 12px 16px;
+  }
+  .tb-row .tb-cell:last-child{ border-right:none; }
+  .tb-cell .label{
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--amber-deep);
+    text-transform:uppercase;
+    display:block;
+    margin-bottom: 4px;
+  }
+  .tb-cell .value{
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+  .tb-full{
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--blueprint);
+    background: var(--blueprint);
+    color: #fff;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+  }
+  .tb-full .label{ font-size:10px; letter-spacing:3px; color: var(--amber); text-transform:uppercase;}
+  .tb-full .value{ font-size: 15px; font-weight:600; }
+  .stamp{
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #9FB4C6;
+    text-transform: uppercase;
+  }
+
+  /* ===== CTA buttons ===== */
+  .cta-row{
+    display:flex;
+    gap: 14px;
+    margin-bottom: 38px;
+    flex-wrap: wrap;
+  }
+  button.btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 13px 22px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  button.btn:hover{ transform: translateY(-2px); }
+  button.btn:active{ transform: translateY(0); }
+  .btn-primary{ background: var(--blueprint); color: #fff; }
+  .btn-primary:hover{ box-shadow: 4px 4px 0 var(--amber); }
+  .btn-secondary{ background: var(--stamp-green); color:#fff; }
+  .btn-secondary:hover{ box-shadow: 4px 4px 0 var(--blueprint); }
+
+  #msgOut{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 14px 18px;
+    background: #fff;
+    border-left: 3px solid var(--amber);
+    margin: -18px 0 34px;
+    display:none;
+    color: var(--ink);
+  }
+  #msgOut.show{ display:block; }
+
+  footer{
+    border-top: 2px solid var(--blueprint);
+    padding: 20px 40px 26px;
+    display:flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 620px){
+    nav.pillnav{ position:static; margin-top:20px; }
+    header.hero{ padding: 30px 22px 26px; }
+    .content{ padding: 28px 22px 5px; }
+    .dept-grid, .tb-row{ grid-template-columns: 1fr; }
+    footer{ flex-direction:column; padding: 20px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <div class="corner-tl"></div><div class="corner-br"></div>
+
+  <header class="hero">
+    <nav class="pillnav">
+      <a href="#about">Home</a>
+      <a href="#student">Student Info</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="eyebrow">Institutional Case Study — Sheet 01</div>
+    <h1 class="title">Symbiosis Institute of Technology, <span class="loc">Nagpur</span></h1>
+    <p class="tagline">// Excellence in Engineering Education — Est. record, Dept. of Computer Science and Engineering</p>
+  </header>
+
+  <div class="content">
+
+    <section id="about">
+      <div class="section-label"><span class="idx">01</span> About the Institution</div>
+      <p class="about-copy">
+        Symbiosis Institute of Technology (SIT), Nagpur is a premier engineering institution
+        built to produce skilled professionals capable of driving technological advancement.
+        The campus pairs rigorous coursework with hands-on labs and sustained industry contact.
+      </p>
+      <ul class="spec-list">
+        <li>Founded with a mission to excel in technical education</li>
+        <li>State-of-the-art infrastructure and laboratory facilities</li>
+        <li>Faculty drawn from active industry and research backgrounds</li>
+        <li>Established placement pipeline across core engineering sectors</li>
+      </ul>
+    </section>
+
+    <section id="departments">
+      <div class="section-label"><span class="idx">02</span> Departments on Record</div>
+      <div class="dept-grid">
+        <div class="dept-cell">
+          <span class="code">CSE-01</span>
+          <h3>Computer Science &amp; Engineering</h3>
+          <p>Modern computing, software systems, and applied programming.</p>
+        </div>
+        <div class="dept-cell">
+          <span class="code">EEE-02</span>
+          <h3>Electrical Engineering</h3>
+          <p>Power systems, control theory, and automation design.</p>
+        </div>
+        <div class="dept-cell">
+          <span class="code">MEC-03</span>
+          <h3>Mechanical Engineering</h3>
+          <p>Machine design, thermodynamics, and manufacturing process.</p>
+        </div>
+        <div class="dept-cell">
+          <span class="code">CIV-04</span>
+          <h3>Civil Engineering</h3>
+          <p>Structural design, infrastructure, and construction planning.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="student">
+      <div class="section-label"><span class="idx">03</span> Student Record — Title Block</div>
+      <div class="titleblock-wrap">
+        <div class="titleblock">
+          <div class="tb-full">
+            <span class="label">Student Name</span>
+            <span class="value">Diya Hassani</span>
+          </div>
+          <div class="tb-row">
+            <div class="tb-cell">
+              <span class="label">PRN</span>
+              <span class="value">24070521239</span>
+            </div>
+            <div class="tb-cell">
+              <span class="label">Year</span>
+              <span class="value">3rd Year</span>
+            </div>
+          </div>
+          <div class="tb-row" style="grid-template-columns:1fr;">
+            <div class="tb-cell" style="border-right:none;">
+              <span class="label">Department</span>
+              <span class="value">Computer Science and Engineering</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta-row">
+      <button class="btn btn-primary" onclick="showWelcome()">Click for Welcome Message</button>
+      <button class="btn btn-secondary" onclick="showFull()">View Full Student Information</button>
+    </div>
+
+    <div id="msgOut"></div>
+
+  </div>
+
+  <footer id="contact">
+    <span>Drawn by: Diya Hassani · PRN 24070521239</span>
+    <span>File: case_study_1.html · Sheet: Case Study Folder</span>
+  </footer>
+</div>
+
+<script>
+  function showWelcome(){
+    const out = document.getElementById('msgOut');
+    out.textContent = "Welcome, Diya Hassani — glad to have you on record at SIT Nagpur, Dept. of CSE, 3rd Year.";
+    out.classList.add('show');
+  }
+  function showFull(){
+    const out = document.getElementById('msgOut');
+    out.innerHTML = "<strong>Full Student Record</strong><br>" +
+      "Name: Diya Hassani<br>" +
+      "PRN: 24070521239<br>" +
+      "Department: Computer Science and Engineering<br>" +
+      "Year: 3rd Year";
+    out.classList.add('show');
+  }
+</script>
+
+</body>
+</html>
