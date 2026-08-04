@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bill Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root{
+    --teal: #0F766E;
+    --teal-dark: #0B5A54;
+    --bg: #F1F5F4;
+    --card: #ffffff;
+    --line: #E2E8E7;
+    --text: #1F2937;
+    --muted: #6B7280;
+    --red: #C0392B;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; padding: 24px 14px;
+    background: var(--bg);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--text);
+    display:flex; justify-content:center;
+  }
+  .card{
+    width: 100%; max-width: 420px;
+    background: var(--card);
+    border-radius: 10px;
+    padding: 20px 22px 24px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  }
+  h2{
+    font-size: 18px;
+    color: var(--teal-dark);
+    margin: 14px 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--teal);
+  }
+  h2:first-child{ margin-top: 0; }
+  label{
+    display:block; font-size: 12.5px; font-weight:600;
+    color: var(--muted); margin: 10px 0 3px;
+  }
+  input[type=text], input[type=number]{
+    width:100%; padding: 8px 9px; font-size: 14px;
+    border: 1px solid var(--line); border-radius: 6px;
+    color: var(--text); outline:none;
+  }
+  input:focus{ border-color: var(--teal); }
+  .row2{ display:flex; gap:10px; }
+  .row2 > div{ flex:1; }
+  .radios{ display:flex; gap:14px; margin-top:6px; font-size:13.5px; }
+  .radios label{ display:flex; align-items:center; gap:5px; font-weight:400; color:var(--text); margin:0; }
+  .chk{ display:flex; align-items:center; gap:6px; margin-top:10px; font-size:13.5px; }
+  .chk label{ margin:0; font-weight:400; color:var(--text); }
+
+  .summary{
+    background: #F8FAF9; border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px 14px; margin-top: 16px; font-size: 13.5px;
+  }
+  .summary .line{ display:flex; justify-content:space-between; padding: 3px 0; }
+  .summary .line.neg{ color: var(--red); }
+  .summary .line.tot{
+    border-top: 1px solid var(--line); margin-top: 6px; padding-top: 8px;
+    font-weight: 700; font-size: 15px; color: var(--teal-dark);
+  }
+
+  .btns{ display:flex; gap:10px; margin-top: 18px; }
+  button{
+    flex:1; padding: 10px; border:none; border-radius: 6px;
+    font-size: 13.5px; font-weight:600; cursor:pointer;
+  }
+  .calc{ background: var(--teal); color:#fff; }
+  .calc:hover{ background: var(--teal-dark); }
+  .clear{ background: #E5E7EB; color: var(--text); }
+  .clear:hover{ background:#D1D5DB; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Product Information</h2>
+  <label>Product Name</label>
+  <input type="text" id="productName" value="Rice">
+  <div class="row2">
+    <div><label>Quantity (Kg)</label><input type="number" id="qty" value="40"></div>
+    <div><label>Rate per Kg (₹)</label><input type="number" id="rate" value="50"></div>
+  </div>
+
+  <h2>Charges & Discounts</h2>
+  <div class="row2">
+    <div><label>Discount (%)</label><input type="number" id="discount" value="7"></div>
+    <div><label>GST (%)</label><input type="number" id="gst" value="18"></div>
+  </div>
+  <label>Packing Charges (₹)</label>
+  <input type="number" id="packing" value="0">
+
+  <h2>Payment & Membership</h2>
+  <label style="margin-bottom:0;">Payment Mode</label>
+  <div class="radios">
+    <label><input type="radio" name="pay" value="Cash">Cash</label>
+    <label><input type="radio" name="pay" value="Card">Card</label>
+    <label><input type="radio" name="pay" value="UPI" checked>UPI</label>
+  </div>
+  <div class="chk"><input type="checkbox" id="membership" checked><label>Membership (Yes/No)</label></div>
+
+  <div class="summary" id="summary">
+    <div class="line"><span>Product Cost</span><span id="oCost">₹ 0.00</span></div>
+    <div class="line neg"><span>Discount</span><span id="oDisc">- ₹ 0.00</span></div>
+    <div class="line"><span>Subtotal</span><span id="oSub">₹ 0.00</span></div>
+    <div class="line"><span>GST</span><span id="oGst">+ ₹ 0.00</span></div>
+    <div class="line"><span>Packing</span><span id="oPack">+ ₹ 0.00</span></div>
+    <div class="line tot"><span>Total</span><span id="oTotal">₹ 0.00</span></div>
+  </div>
+
+  <div class="btns">
+    <button class="calc" onclick="calc()">Calculate Bill</button>
+    <button class="clear" onclick="clear_()">Clear Form</button>
+  </div>
+</div>
+
+<script>
+function calc(){
+  const qty = +document.getElementById('qty').value || 0;
+  const rate = +document.getElementById('rate').value || 0;
+  const disc = +document.getElementById('discount').value || 0;
+  const gst = +document.getElementById('gst').value || 0;
+  const pack = +document.getElementById('packing').value || 0;
+
+  const cost = qty * rate;
+  const discAmt = cost * disc / 100;
+  const sub = cost - discAmt;
+  const gstAmt = sub * gst / 100;
+  const total = sub + gstAmt + pack;
+
+  const f = n => "₹ " + n.toFixed(2);
+  oCost.textContent = f(cost);
+  oDisc.textContent = "- " + f(discAmt);
+  oSub.textContent = f(sub);
+  oGst.textContent = "+ " + f(gstAmt);
+  oPack.textContent = "+ " + f(pack);
+  oTotal.textContent = f(total);
+}
+function clear_(){
+  document.querySelectorAll('input[type=text],input[type=number]').forEach(i=>i.value="");
+  document.querySelector('input[value=UPI]').checked = true;
+  document.getElementById('membership').checked = false;
+  calc();
+}
+calc();
+</script>
+
+</body>
+</html>
