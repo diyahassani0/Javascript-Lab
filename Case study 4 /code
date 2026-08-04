@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ATM Card PIN Verification</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+}
+
+/* Floating animation */
+
+body::before{
+content:"";
+position:absolute;
+width:600px;
+height:600px;
+background:rgba(255,255,255,0.05);
+border-radius:50%;
+top:-250px;
+left:-200px;
+}
+
+body::after{
+content:"";
+position:absolute;
+width:500px;
+height:500px;
+background:rgba(255,255,255,0.05);
+border-radius:50%;
+bottom:-220px;
+right:-150px;
+}
+
+/* Container */
+
+.container{
+width:420px;
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 15px 35px rgba(0,0,0,.4);
+z-index:10;
+}
+
+/* ATM Card */
+
+.card{
+height:180px;
+background:linear-gradient(135deg,#004aad,#001f5f);
+border-radius:15px;
+padding:20px;
+color:white;
+margin-bottom:20px;
+position:relative;
+overflow:hidden;
+animation:float 3s infinite ease-in-out;
+}
+
+@keyframes float{
+
+0%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(-8px);
+}
+
+100%{
+transform:translateY(0px);
+}
+
+}
+
+.chip{
+width:60px;
+height:45px;
+background:gold;
+border-radius:8px;
+margin-top:15px;
+}
+
+.bank{
+position:absolute;
+right:20px;
+top:20px;
+font-size:22px;
+font-weight:bold;
+}
+
+.number{
+margin-top:35px;
+letter-spacing:4px;
+font-size:22px;
+}
+
+.owner{
+margin-top:25px;
+font-size:15px;
+}
+
+h2{
+text-align:center;
+color:#004aad;
+margin-bottom:20px;
+}
+
+label{
+font-weight:bold;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+font-size:18px;
+border-radius:8px;
+border:1px solid gray;
+outline:none;
+}
+
+button{
+
+width:100%;
+padding:13px;
+margin-top:20px;
+border:none;
+background:#004aad;
+color:white;
+font-size:18px;
+border-radius:8px;
+cursor:pointer;
+transition:.3s;
+}
+
+button:hover{
+
+background:#0077ff;
+transform:scale(1.02);
+
+}
+
+.result{
+
+margin-top:20px;
+padding:15px;
+background:#f2f2f2;
+border-radius:10px;
+line-height:1.8;
+font-size:17px;
+
+}
+
+.success{
+
+color:green;
+font-weight:bold;
+
+}
+
+.fail{
+
+color:red;
+font-weight:bold;
+
+}
+
+.footer{
+
+margin-top:15px;
+text-align:center;
+font-size:13px;
+color:gray;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<div class="bank">
+ATM BANK
+</div>
+
+<div class="chip"></div>
+
+<div class="number">
+**** **** **** 1234
+</div>
+
+<div class="owner">
+CARD HOLDER
+</div>
+
+</div>
+
+<h2>ATM PIN Verification</h2>
+
+<label>Enter ATM PIN</label>
+
+<input
+type="password"
+id="pin"
+placeholder="Enter PIN"
+/>
+
+<button onclick="verifyPIN()">
+
+Verify PIN
+
+</button>
+
+<div class="result" id="output">
+
+Result will appear here...
+
+</div>
+
+<div class="footer">
+
+JavaScript Function Case Study
+
+</div>
+
+</div>
+
+<script>
+
+/* ==========================================
+   FUNCTION DECLARATION
+   Reverse PIN
+========================================== */
+
+function reversePIN(pin){
+
+return pin.split("").reverse().join("");
+
+}
+
+
+/* ==========================================
+   FUNCTION EXPRESSION
+   Palindrome Check
+========================================== */
+
+const checkPalindrome=function(pin){
+
+return pin===reversePIN(pin);
+
+};
+
+
+/* ==========================================
+   ARROW FUNCTION
+========================================== */
+
+const securityMessage=(status)=>{
+
+return status
+?
+"🔐 Special Security Message : PIN is Highly Secure!"
+:
+"⚠ Normal PIN Detected.";
+
+};
+
+
+/* ==========================================
+   CLOSURE
+========================================== */
+
+function bankDetails(bankName){
+
+let location="India";
+
+return function(){
+
+return bankName+" | "+location;
+
+}
+
+}
+
+const bank=bankDetails("ATM National Bank");
+
+
+/* ==========================================
+   MAIN FUNCTION
+========================================== */
+
+function verifyPIN(){
+
+/* Scope Variable */
+
+let pin=document.getElementById("pin").value;
+
+let output=document.getElementById("output");
+
+if(pin==""){
+
+output.innerHTML="<span class='fail'>Please Enter Your PIN</span>";
+
+return;
+
+}
+
+let reverse=reversePIN(pin);
+
+let palindrome=checkPalindrome(pin);
+
+let today=new Date();
+
+output.innerHTML=
+
+`
+<h3>Verification Result</h3>
+
+<hr><br>
+
+<b>🏦 Bank :</b>
+${bank()}
+
+<br><br>
+
+<b>🔢 Original PIN :</b>
+
+${pin}
+
+<br>
+
+<b>🔄 Reversed PIN :</b>
+
+${reverse}
+
+<br><br>
+
+<b>📅 Date :</b>
+
+${today.toLocaleDateString()}
+
+<br>
+
+<b>⏰ Time :</b>
+
+${today.toLocaleTimeString()}
+
+<br><br>
+
+${
+palindrome
+?
+"<span class='success'>✅ PIN IS A PALINDROME</span>"
+:
+"<span class='fail'>❌ PIN IS NOT A PALINDROME</span>"
+}
+
+<br><br>
+
+<b>Security Status</b>
+
+<br>
+
+${securityMessage(palindrome)}
+
+`;
+
+}
+
+</script>
+
+</body>
+</html>
