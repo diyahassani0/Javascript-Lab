@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>✨ My To-Do List</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #777;
+      margin-bottom: 25px;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    #taskInput {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #e1e1e1;
+      border-radius: 12px;
+      outline: none;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    #taskInput:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+
+    #addBtn {
+      border: none;
+      padding: 0 22px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #addBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    #taskList {
+      list-style: none;
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 14px;
+      background: #f7f7fb;
+      border: 1px solid #eee;
+      transition: 0.25s;
+    }
+
+    .task:hover {
+      transform: translateX(4px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+    }
+
+    .task.completed .task-text {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    .check {
+      width: 21px;
+      height: 21px;
+      cursor: pointer;
+      accent-color: #667eea;
+    }
+
+    .task-text {
+      flex: 1;
+      font-size: 16px;
+      color: #333;
+      word-break: break-word;
+    }
+
+    .actions {
+      display: flex;
+      gap: 7px;
+    }
+
+    .action-btn {
+      border: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .edit {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .delete {
+      background: #f8d7da;
+      color: #842029;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #eee;
+      color: #777;
+      font-size: 14px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 35px 10px;
+      color: #aaa;
+      font-size: 16px;
+    }
+
+    @media (max-width: 500px) {
+      .app {
+        padding: 20px;
+      }
+
+      .input-area {
+        flex-direction: column;
+      }
+
+      #addBtn {
+        padding: 13px;
+      }
+
+      .task {
+        align-items: flex-start;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <h1>✨ My To-Do List</h1>
+    <p class="subtitle">Stay organized. Get things done.</p>
+
+    <div class="input-area">
+      <input
+        type="text"
+        id="taskInput"
+        placeholder="What needs to be done?"
+        autocomplete="off"
+      />
+      <button id="addBtn">＋ Add</button>
+    </div>
+
+    <ul id="taskList"></ul>
+
+    <div class="stats">
+      <span id="totalTasks">0 tasks</span>
+      <span id="completedTasks">0 completed</span>
+    </div>
+
+  </div>
+
+  <script>
+    // ==============================
+    // DOM TRAVERSAL
+    // ==============================
+
+    const taskInput = document.querySelector("#taskInput");
+    const addBtn = document.querySelector("#addBtn");
+    const taskList = document.querySelector("#taskList");
+    const totalTasks = document.querySelector("#totalTasks");
+    const completedTasks = document.querySelector("#completedTasks");
+
+
+    // ==============================
+    // ADD TASK
+    // ==============================
+
+    function addTask() {
+      const text = taskInput.value.trim();
+
+      if (text === "") {
+        taskInput.focus();
+        return;
+      }
+
+      // Create a new <li>
+      const li = document.createElement("li");
+      li.className = "task";
+
+      // Create checkbox
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "check";
+
+      // Create task text
+      const span = document.createElement("span");
+      span.className = "task-text";
+      span.textContent = text;
+
+      // Create action container
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      // Create Edit button
+      const editBtn = document.createElement("button");
+      editBtn.className = "action-btn edit";
+      editBtn.textContent = "✏️ Edit";
+
+      // Create Delete button
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "action-btn delete";
+      deleteBtn.textContent = "🗑️ Delete";
+
+      // DOM updates/traversal
+      actions.append(editBtn, deleteBtn);
+      li.append(checkbox, span, actions);
+      taskList.appendChild(li);
+
+      // Clear input
+      taskInput.value = "";
+
+      updateStats();
+      taskInput.focus();
+    }
+
+
+    // ==============================
+    // EDIT / DELETE / COMPLETE
+    // ==============================
+
+    taskList.addEventListener("click", function(event) {
+
+      // DOM traversal using closest()
+      const task = event.target.closest(".task");
+
+      if (!task) return;
+
+      // EDIT
+      if (event.target.classList.contains("edit")) {
+
+        const taskText = task.querySelector(".task-text");
+
+        const newText = prompt(
+          "Edit your task:",
+          taskText.textContent
+        );
+
+        if (newText !== null && newText.trim() !== "") {
+          // DOM update
+          taskText.textContent = newText.trim();
+        }
+      }
+
+
+      // DELETE
+      if (event.target.classList.contains("delete")) {
+
+        task.remove();
+
+        updateStats();
+      }
+    });
+
+
+    // ==============================
+    // COMPLETE TASK
+    // ==============================
+
+    taskList.addEventListener("change", function(event) {
+
+      if (event.target.classList.contains("check")) {
+
+        // DOM traversal
+        const task = event.target.closest(".task");
+
+        // DOM update using classList
+        task.classList.toggle(
+          "completed",
+          event.target.checked
+        );
+
+        updateStats();
+      }
+    });
+
+
+    // ==============================
+    // UPDATE STATISTICS
+    // ==============================
+
+    function updateStats() {
+
+      // DOM traversal
+      const tasks = taskList.querySelectorAll(".task");
+      const completed = taskList.querySelectorAll(
+        ".task.completed"
+      );
+
+      totalTasks.textContent =
+        `${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`;
+
+      completedTasks.textContent =
+        `${completed.length} completed`;
+
+      // Empty-state DOM update
+      if (tasks.length === 0) {
+
+        taskList.innerHTML = `
+          <li class="empty">
+            📝 No tasks yet. Add something you need to do!
+          </li>
+        `;
+
+      } else {
+
+        const emptyMessage = taskList.querySelector(".empty");
+
+        if (emptyMessage) {
+          emptyMessage.remove();
+        }
+      }
+    }
+
+
+    // ==============================
+    // EVENT LISTENERS
+    // ==============================
+
+    addBtn.addEventListener("click", addTask);
+
+    taskInput.addEventListener("keydown", function(event) {
+
+      if (event.key === "Enter") {
+        addTask();
+      }
+
+    });
+
+
+    // Initial DOM update
+    updateStats();
+
+  </script>
+
+</body>
+</html>

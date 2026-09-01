@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>String & Regex Analysis System</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f5f8;
+            color: #222;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            background: #17365d;
+            color: white;
+            padding: 25px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        header p {
+            margin: 8px 0 0;
+            color: #dce6f2;
+            font-size: 14px;
+        }
+
+        /* ================= NAVIGATION ================= */
+
+        .navigation {
+            background: white;
+            border-bottom: 1px solid #d8dde5;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 12px;
+            gap: 6px;
+        }
+
+        .navigation button {
+            border: none;
+            background: transparent;
+            color: #444;
+            padding: 11px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
+        .navigation button:hover {
+            background: #e9eef5;
+            color: #17365d;
+        }
+
+        .navigation button.active {
+            background: #17365d;
+            color: white;
+        }
+
+        /* ================= MAIN ================= */
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .tab {
+            display: none;
+        }
+
+        .tab.active {
+            display: block;
+        }
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: white;
+            padding: 28px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #17365d;
+            border-bottom: 1px solid #e0e4e9;
+            padding-bottom: 12px;
+        }
+
+        .description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* ================= TEXTAREA ================= */
+
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 15px;
+            border: 1px solid #bfc6cf;
+            border-radius: 6px;
+            resize: vertical;
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+            margin-top: 10px;
+        }
+
+        textarea:focus,
+        input:focus {
+            outline: none;
+            border-color: #17365d;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #bfc6cf;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 15px;
+        }
+
+        /* ================= BUTTON ================= */
+
+        .primary-btn {
+            background: #17365d;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-top: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .primary-btn:hover {
+            background: #0e2846;
+        }
+
+        .secondary-btn {
+            background: #707780;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-top: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .secondary-btn:hover {
+            background: #555b61;
+        }
+
+        /* ================= RESULT ================= */
+
+        .result {
+            margin-top: 20px;
+            padding: 18px;
+            background: #f7f9fb;
+            border-left: 4px solid #17365d;
+            border-radius: 5px;
+            line-height: 1.8;
+            min-height: 60px;
+        }
+
+        .success {
+            color: #176b38;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #a52a2a;
+            font-weight: bold;
+        }
+
+        .highlight {
+            color: #17365d;
+            font-weight: bold;
+        }
+
+        /* ================= DASHBOARD ================= */
+
+        .welcome {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .welcome h2 {
+            border: none;
+            font-size: 26px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .dashboard-item {
+            padding: 20px;
+            background: #f7f9fb;
+            border: 1px solid #e0e4e9;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .dashboard-item h3 {
+            color: #17365d;
+            margin-top: 0;
+        }
+
+        .dashboard-item p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* ================= STATISTICS ================= */
+
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: #f7f9fb;
+            border: 1px solid #dfe4ea;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-box h3 {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-box p {
+            margin: 10px 0 0;
+            font-size: 25px;
+            font-weight: bold;
+            color: #17365d;
+        }
+
+        /* ================= TAGS ================= */
+
+        .tag {
+            display: inline-block;
+            background: #e8edf4;
+            color: #17365d;
+            padding: 7px 12px;
+            margin: 4px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width: 800px) {
+
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .statistics {
+                grid-template-columns: 1fr 1fr;
+            }
+
+        }
+
+        @media(max-width: 550px) {
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .statistics {
+                grid-template-columns: 1fr;
+            }
+
+            .navigation {
+                flex-direction: column;
+            }
+
+            .navigation button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- ================= HEADER ================= -->
+
+<header>
+
+    <h1>String & Regular Expression Analysis System</h1>
+
+    <p>
+        JavaScript Practical | String Functions | Regex | Data Extraction
+    </p>
+
+</header>
+
+
+<!-- ================= NAVIGATION ================= -->
+
+<div class="navigation">
+
+    <button class="active"
+            onclick="openTab('dashboard', this)">
+        Dashboard
+    </button>
+
+    <button onclick="openTab('email', this)">
+        Email Validation
+    </button>
+
+    <button onclick="openTab('text', this)">
+        Text Input
+    </button>
+
+    <button onclick="openTab('statistics', this)">
+        Text Analysis
+    </button>
+
+    <button onclick="openTab('emailExtract', this)">
+        Email Extraction
+    </button>
+
+    <button onclick="openTab('phoneExtract', this)">
+        Phone Extraction
+    </button>
+
+    <button onclick="openTab('numberExtract', this)">
+        Number Extraction
+    </button>
+
+    <button onclick="openTab('stringFunctions', this)">
+        String Functions
+    </button>
+
+    <button onclick="openTab('regex', this)">
+        Regex Analysis
+    </button>
+
+    <button onclick="openTab('reset', this)">
+        Reset
+    </button>
+
+</div>
+
+
+<div class="container">
+
+
+<!-- =================================================
+     DASHBOARD
+================================================= -->
+
+<div id="dashboard" class="tab active">
+
+    <div class="card welcome">
+
+        <h2>Text Analysis Dashboard</h2>
+
+        <p class="description">
+
+            This application demonstrates the use of
+            JavaScript string functions and regular expressions
+            for validation, extraction and text analysis.
+
+        </p>
+
+        <div class="dashboard-grid">
+
+            <div class="dashboard-item">
+
+                <h3>Email Validation</h3>
+
+                <p>
+                    Validate email addresses using Regex.
+                </p>
+
+            </div>
+
+            <div class="dashboard-item">
+
+                <h3>Text Analysis</h3>
+
+                <p>
+                    Analyze characters, words and lines.
+                </p>
+
+            </div>
+
+            <div class="dashboard-item">
+
+                <h3>Data Extraction</h3>
+
+                <p>
+                    Extract emails, phone numbers and numbers.
+                </p>
+
+            </div>
+
+            <div class="dashboard-item">
+
+                <h3>String Functions</h3>
+
+                <p>
+                    Demonstrate JavaScript string methods.
+                </p>
+
+            </div>
+
+            <div class="dashboard-item">
+
+                <h3>Regular Expressions</h3>
+
+                <p>
+                    Search and identify patterns in text.
+                </p>
+
+            </div>
+
+            <div class="dashboard-item">
+
+                <h3>College Practical</h3>
+
+                <p>
+                    Interactive implementation of the practical.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     EMAIL VALIDATION
+================================================= -->
+
+<div id="email" class="tab">
+
+    <div class="card">
+
+        <h2>Email Validation</h2>
+
+        <p class="description">
+
+            Enter an email address. The system uses a
+            Regular Expression to check whether the email
+            follows a valid format.
+
+        </p>
+
+        <input
+            type="text"
+            id="emailInput"
+            placeholder="example@gmail.com">
+
+        <button class="primary-btn"
+                onclick="validateEmail()">
+
+            Validate Email
+
+        </button>
+
+        <div id="emailResult" class="result">
+
+            Enter an email address to begin.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     TEXT INPUT
+================================================= -->
+
+<div id="text" class="tab">
+
+    <div class="card">
+
+        <h2>Text Input</h2>
+
+        <p class="description">
+
+            Enter or paste text below. This text will be
+            used by the other analysis modules.
+
+        </p>
+
+        <textarea
+            id="textInput"
+            placeholder="Enter your text here..."></textarea>
+
+        <button class="primary-btn"
+                onclick="saveText()">
+
+            Save Text
+
+        </button>
+
+        <div id="textResult" class="result">
+
+            No text has been entered.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     TEXT ANALYSIS
+================================================= -->
+
+<div id="statistics" class="tab">
+
+    <div class="card">
+
+        <h2>Text Analysis</h2>
+
+        <p class="description">
+
+            Analyze the entered text using JavaScript
+            string properties and functions.
+
+        </p>
+
+        <button class="primary-btn"
+                onclick="analyzeText()">
+
+            Analyze Text
+
+        </button>
+
+        <div class="statistics">
+
+            <div class="stat-box">
+
+                <h3>Characters</h3>
+
+                <p id="charCount">0</p>
+
+            </div>
+
+            <div class="stat-box">
+
+                <h3>Words</h3>
+
+                <p id="wordCount">0</p>
+
+            </div>
+
+            <div class="stat-box">
+
+                <h3>Lines</h3>
+
+                <p id="lineCount">0</p>
+
+            </div>
+
+            <div class="stat-box">
+
+                <h3>Sentences</h3>
+
+                <p id="sentenceCount">0</p>
+
+            </div>
+
+        </div>
+
+        <div id="analysisResult"
+             class="result">
+
+            Analysis will appear here.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     EMAIL EXTRACTION
+================================================= -->
+
+<div id="emailExtract" class="tab">
+
+    <div class="card">
+
+        <h2>Email Address Extraction</h2>
+
+        <p class="description">
+
+            Extract all email addresses from the entered
+            text using a Regular Expression.
+
+        </p>
+
+        <button class="primary-btn"
+                onclick="extractEmails()">
+
+            Extract Emails
+
+        </button>
+
+        <div id="emailExtractResult"
+             class="result">
+
+            Results will appear here.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     PHONE EXTRACTION
+================================================= -->
+
+<div id="phoneExtract" class="tab">
+
+    <div class="card">
+
+        <h2>Phone Number Extraction</h2>
+
+        <p class="description">
+
+            Find phone numbers from the entered text
+            using Regular Expressions.
+
+        </p>
+
+        <button class="primary-btn"
+                onclick="extractPhones()">
+
+            Extract Phone Numbers
+
+        </button>
+
+        <div id="phoneResult"
+             class="result">
+
+            Results will appear here.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     NUMBER EXTRACTION
+================================================= -->
+
+<div id="numberExtract" class="tab">
+
+    <div class="card">
+
+        <h2>Number Extraction</h2>
+
+        <p class="description">
+
+            Extract numeric values from the entered text
+            using a Regular Expression.
+
+        </p>
+
+        <button class="primary-btn"
+                onclick="extractNumbers()">
+
+            Extract Numbers
+
+        </button>
+
+        <div id="numberResult"
+             class="result">
+
+            Results will appear here.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     STRING FUNCTIONS
+================================================= -->
+
+<div id="stringFunctions" class="tab">
+
+    <div class="card">
+
+        <h2>String Functions</h2>
+
+        <p class="description">
+
+            This section demonstrates common JavaScript
+            string functions.
+
+        </p>
+
+        <button class="primary-btn"
+                onclick="stringOperations()">
+
+            Apply String Functions
+
+        </button>
+
+        <div id="stringResult"
+             class="result">
+
+            Results will appear here.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     REGEX ANALYSIS
+================================================= -->
+
+<div id="regex" class="tab">
+
+    <div class="card">
+
+        <h2>Regular Expression Analysis</h2>
+
+        <p class="description">
+
+            Search for a custom pattern in the entered text.
+            This demonstrates the use of JavaScript RegExp.
+
+        </p>
+
+        <input
+            type="text"
+            id="regexInput"
+            placeholder="Enter pattern, example: JavaScript">
+
+        <button class="primary-btn"
+                onclick="regexSearch()">
+
+            Search Pattern
+
+        </button>
+
+        <div id="regexResult"
+             class="result">
+
+            Enter a pattern to search.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     RESET
+================================================= -->
+
+<div id="reset" class="tab">
+
+    <div class="card">
+
+        <h2>Reset Application</h2>
+
+        <p class="description">
+
+            Clear the entered text and reset all analysis
+            results.
+
+        </p>
+
+        <button class="secondary-btn"
+                onclick="resetApplication()">
+
+            Reset All Data
+
+        </button>
+
+        <div id="resetResult"
+             class="result">
+
+            Application is ready.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    String & Regular Expression Analysis System
+    <br>
+    JavaScript Practical Project
+
+</footer>
+
+
+<script>
+
+
+/* =================================================
+   GLOBAL TEXT
+================================================= */
+
+let currentText = "";
+
+
+
+/* =================================================
+   TAB SYSTEM
+================================================= */
+
+function openTab(tabName, button) {
+
+    let tabs =
+        document.getElementsByClassName("tab");
+
+    for(let i = 0; i < tabs.length; i++) {
+
+        tabs[i].classList.remove("active");
+
+    }
+
+
+    let buttons =
+        document.querySelectorAll(
+            ".navigation button"
+        );
+
+    buttons.forEach(function(btn) {
+
+        btn.classList.remove("active");
+
+    });
+
+
+    document
+        .getElementById(tabName)
+        .classList.add("active");
+
+
+    button.classList.add("active");
+
+}
+
+
+
+/* =================================================
+   EMAIL VALIDATION
+================================================= */
+
+function validateEmail() {
+
+    let email =
+        document
+        .getElementById("emailInput")
+        .value
+        .trim();
+
+
+    let pattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+    if(email === "") {
+
+        document
+        .getElementById("emailResult")
+        .innerHTML =
+
+            "<span class='error'>" +
+            "Please enter an email address." +
+            "</span>";
+
+        return;
+
+    }
+
+
+    if(pattern.test(email)) {
+
+        document
+        .getElementById("emailResult")
+        .innerHTML =
+
+            "<span class='success'>" +
+            "✓ Valid Email Address" +
+            "</span>" +
+
+            "<br><br>" +
+
+            "Entered Email: " +
+            email;
+
+    }
+
+    else {
+
+        document
+        .getElementById("emailResult")
+        .innerHTML =
+
+            "<span class='error'>" +
+            "✗ Invalid Email Address" +
+            "</span>" +
+
+            "<br><br>" +
+
+            "Please check the email format.";
+
+    }
+
+}
+
+
+
+/* =================================================
+   SAVE TEXT
+================================================= */
+
+function saveText() {
+
+    currentText =
+        document
+        .getElementById("textInput")
+        .value;
+
+
+    if(currentText.trim() === "") {
+
+        document
+        .getElementById("textResult")
+        .innerHTML =
+
+            "<span class='error'>" +
+            "Please enter some text." +
+            "</span>";
+
+        return;
+
+    }
+
+
+    document
+    .getElementById("textResult")
+    .innerHTML =
+
+        "<span class='success'>" +
+        "✓ Text saved successfully." +
+        "</span>" +
+
+        "<br><br>" +
+
+        "Characters entered: " +
+        currentText.length;
+
+}
+
+
+
+/* =================================================
+   CHECK TEXT
+================================================= */
+
+function checkText() {
+
+    if(currentText.trim() === "") {
+
+        currentText =
+            document
+            .getElementById("textInput")
+            .value;
+
+    }
+
+
+    if(currentText.trim() === "") {
+
+        alert(
+            "Please enter and save text first."
+        );
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+
+/* =================================================
+   TEXT ANALYSIS
+================================================= */
+
+function analyzeText() {
+
+    if(!checkText()) return;
+
+
+    let characters =
+        currentText.length;
+
+
+    let words =
+        currentText
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .length;
+
+
+    let lines =
+        currentText
+        .split(/\r?\n/)
+        .length;
+
+
+    let sentences =
+        currentText
+        .split(/[.!?]+/)
+        .filter(function(sentence) {
+
+            return sentence.trim() !== "";
+
+        })
+        .length;
+
+
+    document
+    .getElementById("charCount")
+    .innerText =
+        characters;
+
+
+    document
+    .getElementById("wordCount")
+    .innerText =
+        words;
+
+
+    document
+    .getElementById("lineCount")
+    .innerText =
+        lines;
+
+
+    document
+    .getElementById("sentenceCount")
+    .innerText =
+        sentences;
+
+
+    document
+    .getElementById("analysisResult")
+    .innerHTML =
+
+        "<b>Text Analysis Completed</b>" +
+
+        "<br><br>" +
+
+        "Characters including spaces: " +
+        characters +
+
+        "<br>" +
+
+        "Words: " +
+        words +
+
+        "<br>" +
+
+        "Lines: " +
+        lines +
+
+        "<br>" +
+
+        "Sentences: " +
+        sentences;
+
+}
+
+
+
+/* =================================================
+   EMAIL EXTRACTION
+================================================= */
+
+function extractEmails() {
+
+    if(!checkText()) return;
+
+
+    let pattern =
+        /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+
+
+    let emails =
+        currentText.match(pattern);
+
+
+    if(emails) {
+
+        let output = "";
+
+        emails.forEach(function(email) {
+
+            output +=
+                "<span class='tag'>" +
+                email +
+                "</span>";
+
+        });
+
+
+        document
+        .getElementById("emailExtractResult")
+        .innerHTML =
+
+            "<b>Emails Found:</b> " +
+            emails.length +
+
+            "<br><br>" +
+
+            output;
+
+    }
+
+    else {
+
+        document
+        .getElementById("emailExtractResult")
+        .innerHTML =
+
+            "No email addresses found.";
+
+    }
+
+}
+
+
+
+/* =================================================
+   PHONE EXTRACTION
+================================================= */
+
+function extractPhones() {
+
+    if(!checkText()) return;
+
+
+    let pattern =
+        /\b(?:\+91[-\s]?)?[6-9]\d{9}\b/g;
+
+
+    let phones =
+        currentText.match(pattern);
+
+
+    if(phones) {
+
+        let output = "";
+
+        phones.forEach(function(phone) {
+
+            output +=
+                "<span class='tag'>" +
+                phone +
+                "</span>";
+
+        });
+
+
+        document
+        .getElementById("phoneResult")
+        .innerHTML =
+
+            "<b>Phone Numbers Found:</b> " +
+            phones.length +
+
+            "<br><br>" +
+
+            output;
+
+    }
+
+    else {
+
+        document
+        .getElementById("phoneResult")
+        .innerHTML =
+
+            "No phone numbers found.";
+
+    }
+
+}
+
+
+
+/* =================================================
+   NUMBER EXTRACTION
+================================================= */
+
+function extractNumbers() {
+
+    if(!checkText()) return;
+
+
+    let pattern =
+        /\b\d+(?:\.\d+)?\b/g;
+
+
+    let numbers =
+        currentText.match(pattern);
+
+
+    if(numbers) {
+
+        let output = "";
+
+        numbers.forEach(function(number) {
+
+            output +=
+                "<span class='tag'>" +
+                number +
+                "</span>";
+
+        });
+
+
+        document
+        .getElementById("numberResult")
+        .innerHTML =
+
+            "<b>Numbers Found:</b> " +
+            numbers.length +
+
+            "<br><br>" +
+
+            output;
+
+    }
+
+    else {
+
+        document
+        .getElementById("numberResult")
+        .innerHTML =
+
+            "No numbers found.";
+
+    }
+
+}
+
+
+
+/* =================================================
+   STRING FUNCTIONS
+================================================= */
+
+function stringOperations() {
+
+    if(!checkText()) return;
+
+
+    let trimmed =
+        currentText.trim();
+
+
+    let upper =
+        currentText.toUpperCase();
+
+
+    let lower =
+        currentText.toLowerCase();
+
+
+    let replaced =
+        currentText.replace(
+            /JavaScript/gi,
+            "JS"
+        );
+
+
+    let words =
+        trimmed
+        .split(/\s+/);
+
+
+    let firstWord =
+        words.length > 0
+        ? words[0]
+        : "";
+
+
+    let reversed =
+        currentText
+        .split("")
+        .reverse()
+        .join("");
+
+
+    document
+    .getElementById("stringResult")
+    .innerHTML =
+
+        "<b>String Function Results</b>" +
+
+        "<br><br>" +
+
+        "<b>trim()</b>: " +
+        trimmed +
+
+        "<br><br>" +
+
+        "<b>toUpperCase()</b>: " +
+        upper +
+
+        "<br><br>" +
+
+        "<b>toLowerCase()</b>: " +
+        lower +
+
+        "<br><br>" +
+
+        "<b>replace()</b>: " +
+        replaced +
+
+        "<br><br>" +
+
+        "<b>split()</b> - First Word: " +
+        firstWord +
+
+        "<br><br>" +
+
+        "<b>reverse technique</b>: " +
+        reversed;
+
+}
+
+
+
+/* =================================================
+   CUSTOM REGEX SEARCH
+================================================= */
+
+function regexSearch() {
+
+    if(!checkText()) return;
+
+
+    let patternText =
+        document
+        .getElementById("regexInput")
+        .value
+        .trim();
+
+
+    if(patternText === "") {
+
+        document
+        .getElementById("regexResult")
+        .innerHTML =
+
+            "<span class='error'>" +
+            "Please enter a search pattern." +
+            "</span>";
+
+        return;
+
+    }
+
+
+    try {
+
+        let regex =
+            new RegExp(patternText, "gi");
+
+
+        let matches =
+            currentText.match(regex);
+
+
+        if(matches) {
+
+            document
+            .getElementById("regexResult")
+            .innerHTML =
+
+                "<span class='success'>" +
+                "Pattern Found" +
+                "</span>" +
+
+                "<br><br>" +
+
+                "Number of Matches: " +
+                matches.length +
+
+                "<br><br>" +
+
+                "Matches:<br>" +
+
+                matches
+                .map(function(match) {
+
+                    return "<span class='tag'>" +
+                           match +
+                           "</span>";
+
+                })
+                .join(" ");
+
+        }
+
+        else {
+
+            document
+            .getElementById("regexResult")
+            .innerHTML =
+
+                "No matching pattern found.";
+
+        }
+
+    }
+
+    catch(error) {
+
+        document
+        .getElementById("regexResult")
+        .innerHTML =
+
+            "<span class='error'>" +
+            "Invalid Regular Expression." +
+            "</span>";
+
+    }
+
+}
+
+
+
+/* =================================================
+   RESET
+================================================= */
+
+function resetApplication() {
+
+    currentText = "";
+
+
+    document
+    .getElementById("textInput")
+    .value = "";
+
+
+    document
+    .getElementById("emailInput")
+    .value = "";
+
+
+    document
+    .getElementById("regexInput")
+    .value = "";
+
+
+    document
+    .getElementById("charCount")
+    .innerText = "0";
+
+
+    document
+    .getElementById("wordCount")
+    .innerText = "0";
+
+
+    document
+    .getElementById("lineCount")
+    .innerText = "0";
+
+
+    document
+    .getElementById("sentenceCount")
+    .innerText = "0";
+
+
+    document
+    .getElementById("resetResult")
+    .innerHTML =
+
+        "<span class='success'>" +
+        "✓ All data has been cleared." +
+        "</span>";
+
+}
+
+</script>
+
+</body>
+</html>

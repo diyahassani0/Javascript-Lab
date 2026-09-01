@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Cart Total Calculator</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:#eef4ff;
+display:flex;
+justify-content:center;
+padding:30px;
+}
+
+.container{
+width:900px;
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+h1{
+text-align:center;
+color:#003366;
+margin-bottom:20px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+table th{
+background:#003366;
+color:white;
+padding:10px;
+}
+
+table td{
+padding:10px;
+text-align:center;
+}
+
+input{
+width:70px;
+padding:6px;
+}
+
+button{
+padding:12px 20px;
+background:#003366;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+margin-top:20px;
+font-size:16px;
+}
+
+button:hover{
+background:#0055aa;
+}
+
+.summary{
+margin-top:25px;
+background:#f5f9ff;
+padding:20px;
+border-left:6px solid #003366;
+border-radius:10px;
+}
+
+.summary p{
+margin:8px 0;
+font-size:18px;
+}
+
+.discount{
+color:green;
+font-weight:bold;
+}
+
+.tax{
+color:#cc5500;
+}
+
+.total{
+font-size:24px;
+font-weight:bold;
+color:#003366;
+}
+
+.footer{
+margin-top:20px;
+text-align:center;
+color:gray;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🛒 Smart Cart Total Calculator</h1>
+
+<table border="1">
+
+<tr>
+<th>Product</th>
+<th>Price (₹)</th>
+<th>Quantity</th>
+</tr>
+
+<tr>
+<td>Laptop</td>
+<td>50000</td>
+<td><input type="number" id="q1" min="0" value="1"></td>
+</tr>
+
+<tr>
+<td>Headphones</td>
+<td>2500</td>
+<td><input type="number" id="q2" min="0" value="1"></td>
+</tr>
+
+<tr>
+<td>Mouse</td>
+<td>800</td>
+<td><input type="number" id="q3" min="0" value="1"></td>
+</tr>
+
+<tr>
+<td>Keyboard</td>
+<td>1500</td>
+<td><input type="number" id="q4" min="0" value="1"></td>
+</tr>
+
+</table>
+
+<br>
+
+Coupon Code :
+
+<input id="coupon" style="width:150px">
+
+<br>
+
+<button onclick="calculateCart()">
+Calculate Bill
+</button>
+
+<div class="summary" id="result"></div>
+
+<div class="footer">
+Developed using Objects, Arrays & JavaScript Methods
+</div>
+
+</div>
+
+<script>
+
+function calculateCart(){
+
+try{
+
+const products=[
+
+{name:"Laptop",price:50000,qty:Number(document.getElementById("q1").value)},
+
+{name:"Headphones",price:2500,qty:Number(document.getElementById("q2").value)},
+
+{name:"Mouse",price:800,qty:Number(document.getElementById("q3").value)},
+
+{name:"Keyboard",price:1500,qty:Number(document.getElementById("q4").value)}
+
+];
+
+if(products.some(item=>item.qty<0))
+throw "Quantity cannot be negative";
+
+const availableProducts=products.filter(item=>item.qty>0);
+
+const cart=availableProducts.map(item=>({
+
+...item,
+
+total:item.price*item.qty
+
+}));
+
+const grandTotal=cart.reduce((sum,item)=>sum+item.total,0);
+
+let discount=0;
+
+if(grandTotal>=60000)
+discount=20;
+
+else if(grandTotal>=30000)
+discount=15;
+
+else if(grandTotal>=10000)
+discount=10;
+
+const coupon=document.getElementById("coupon").value.toUpperCase();
+
+if(coupon==="SAVE5")
+discount+=5;
+
+const discountAmount=(grandTotal*discount)/100;
+
+const afterDiscount=grandTotal-discountAmount;
+
+const tax=afterDiscount*0.18;
+
+const finalTotal=afterDiscount+tax;
+
+const expensive=cart.find(item=>item.price>10000);
+
+let invoice="<h2>Invoice Summary</h2>";
+
+cart.forEach(item=>{
+
+invoice+=`
+<p>
+${item.name}
+&nbsp;&nbsp;
+Qty : ${item.qty}
+&nbsp;&nbsp;
+₹${item.total}
+</p>
+`;
+
+});
+
+invoice+=`
+<hr>
+
+<p>Subtotal : ₹${grandTotal.toFixed(2)}</p>
+
+<p class="discount">
+Discount (${discount}%)
+: -₹${discountAmount.toFixed(2)}
+</p>
+
+<p class="tax">
+GST (18%)
+: ₹${tax.toFixed(2)}
+</p>
+
+<p class="total">
+Final Total : ₹${finalTotal.toFixed(2)}
+</p>
+
+`;
+
+if(expensive){
+
+invoice+=`
+<p>
+⭐ Premium Product :
+${expensive.name}
+</p>
+`;
+
+}
+
+document.getElementById("result").innerHTML=invoice;
+
+}
+
+catch(error){
+
+document.getElementById("result").innerHTML=
+
+"<h3 style='color:red;'>"+error+"</h3>";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

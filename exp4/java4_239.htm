@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palindrome Checker</title>
+
+<style>
+    body{
+        font-family: Arial, sans-serif;
+        background:#f4f4f4;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+    }
+
+    .container{
+        background:white;
+        padding:30px;
+        border-radius:10px;
+        box-shadow:0 0 10px rgba(0,0,0,0.2);
+        width:350px;
+        text-align:center;
+    }
+
+    input{
+        width:90%;
+        padding:10px;
+        margin:15px 0;
+        font-size:16px;
+    }
+
+    button{
+        padding:10px 20px;
+        font-size:16px;
+        cursor:pointer;
+    }
+
+    #result{
+        margin-top:20px;
+        font-weight:bold;
+        font-size:18px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Palindrome Checker</h2>
+
+<input type="text" id="text" placeholder="Enter a word">
+
+<br>
+
+<button onclick="check()">Check</button>
+
+<p id="result"></p>
+
+</div>
+
+<script>
+
+    // Global Scope Variable
+    let appName = "Palindrome Checker";
+
+    // Normal Function
+    function reverseString(str){
+
+        return str.split("").reverse().join("");
+
+    }
+
+    // Function Expression
+    const isPalindrome = function(word){
+
+        return word === reverseString(word);
+
+    };
+
+    // Arrow Function
+    const display = (message) => {
+
+        document.getElementById("result").innerHTML = message;
+
+    };
+
+    // Closure Function
+    function counter(){
+
+        let count = 0;
+
+        return function(){
+
+            count++;
+
+            console.log("Checked : " + count + " time(s)");
+
+        };
+
+    }
+
+    const updateCount = counter();
+
+    function check(){
+
+        try{
+
+            // Local Scope
+            let text = document.getElementById("text").value.trim().toLowerCase();
+
+            if(text==="")
+                throw "Please enter a word.";
+
+            updateCount();
+
+            if(isPalindrome(text))
+                display("✅ '" + text + "' is a Palindrome");
+            else
+                display("❌ '" + text + "' is NOT a Palindrome");
+
+        }
+
+        catch(error){
+
+            display(error);
+
+        }
+
+        finally{
+
+            console.log(appName + " executed successfully.");
+
+        }
+
+    }
+
+</script>
+
+</body>
+</html>
