@@ -1,0 +1,428 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Preferences</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #222;
+            transition: 0.3s;
+        }
+
+        body.dark {
+            background: #18202b;
+            color: #fff;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 40px auto;
+        }
+
+        header {
+            background: #2563eb;
+            color: white;
+            padding: 25px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin-bottom: 8px;
+        }
+
+        .dashboard {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        body.dark .dashboard {
+            background: #222b38;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            color: #2563eb;
+            margin-bottom: 15px;
+        }
+
+        body.dark .section h2 {
+            color: #60a5fa;
+        }
+
+        label {
+            display: block;
+            margin: 12px 0 6px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .checkbox input {
+            width: auto;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            color: white;
+        }
+
+        .save {
+            background: #2563eb;
+        }
+
+        .reset {
+            background: #dc2626;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .status {
+            margin-top: 25px;
+            padding: 15px;
+            background: #eef4ff;
+            border-left: 5px solid #2563eb;
+            border-radius: 6px;
+        }
+
+        body.dark .status {
+            background: #303b4a;
+        }
+
+        .storage-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        body.dark .storage-box {
+            background: #303b4a;
+        }
+
+        .storage-box p {
+            margin: 8px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>⚙ User Preferences</h1>
+        <p>Local Storage & Session Storage Demo</p>
+    </header>
+
+    <div class="dashboard">
+
+        <!-- USER PREFERENCES -->
+        <div class="section">
+            <h2>Personal Preferences</h2>
+
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter your name">
+
+            <label for="theme">Theme</label>
+            <select id="theme">
+                <option value="light">Light Theme</option>
+                <option value="dark">Dark Theme</option>
+            </select>
+
+            <label for="fontSize">Font Size</label>
+            <select id="fontSize">
+                <option value="14px">Small</option>
+                <option value="16px">Medium</option>
+                <option value="18px">Large</option>
+            </select>
+
+            <div class="checkbox">
+                <input type="checkbox" id="notifications">
+                <label for="notifications">Enable Notifications</label>
+            </div>
+
+            <div class="buttons">
+                <button class="save" onclick="savePreferences()">
+                    Save Preferences
+                </button>
+
+                <button class="reset" onclick="resetPreferences()">
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- SESSION STORAGE -->
+        <div class="section">
+            <h2>Current Session</h2>
+
+            <label for="sectionSelect">Last Visited Section</label>
+
+            <select id="sectionSelect" onchange="saveSession()">
+                <option value="Dashboard">Dashboard</option>
+                <option value="Profile">Profile</option>
+                <option value="Settings">Settings</option>
+                <option value="Reports">Reports</option>
+            </select>
+
+            <div class="status">
+                <strong>Session Status:</strong>
+                <span id="sessionStatus">Active</span>
+            </div>
+        </div>
+
+        <!-- STORAGE INFORMATION -->
+        <div class="section">
+            <h2>Storage Information</h2>
+
+            <div class="storage-box">
+                <p>
+                    <strong>Local Storage:</strong>
+                    <span id="localStatus">Not Saved</span>
+                </p>
+
+                <p>
+                    <strong>Session Storage:</strong>
+                    <span id="sessionStatusBox">Active</span>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        PBL / Web Technology Project | Local Storage & Session Storage
+    </footer>
+
+</div>
+
+
+<script>
+
+    // ==========================================
+    // LOAD SAVED PREFERENCES
+    // ==========================================
+
+    window.onload = function () {
+
+        // Get values from Local Storage
+        let savedUsername = localStorage.getItem("username");
+        let savedTheme = localStorage.getItem("theme");
+        let savedFontSize = localStorage.getItem("fontSize");
+        let savedNotifications = localStorage.getItem("notifications");
+
+        if (savedUsername) {
+            document.getElementById("username").value = savedUsername;
+        }
+
+        if (savedTheme) {
+            document.getElementById("theme").value = savedTheme;
+            applyTheme(savedTheme);
+        }
+
+        if (savedFontSize) {
+            document.getElementById("fontSize").value = savedFontSize;
+            document.body.style.fontSize = savedFontSize;
+        }
+
+        if (savedNotifications !== null) {
+            document.getElementById("notifications").checked =
+                savedNotifications === "true";
+        }
+
+        // Get value from Session Storage
+        let lastSection = sessionStorage.getItem("lastSection");
+
+        if (lastSection) {
+            document.getElementById("sectionSelect").value = lastSection;
+        }
+
+        updateStorageStatus();
+    };
+
+
+    // ==========================================
+    // SAVE USER PREFERENCES
+    // ==========================================
+
+    function savePreferences() {
+
+        let username =
+            document.getElementById("username").value;
+
+        let theme =
+            document.getElementById("theme").value;
+
+        let fontSize =
+            document.getElementById("fontSize").value;
+
+        let notifications =
+            document.getElementById("notifications").checked;
+
+
+        // LOCAL STORAGE
+        localStorage.setItem("username", username);
+        localStorage.setItem("theme", theme);
+        localStorage.setItem("fontSize", fontSize);
+        localStorage.setItem("notifications", notifications);
+
+
+        // Apply preferences
+        applyTheme(theme);
+
+        document.body.style.fontSize = fontSize;
+
+        updateStorageStatus();
+
+        alert("Preferences saved successfully!");
+    }
+
+
+    // ==========================================
+    // APPLY THEME
+    // ==========================================
+
+    function applyTheme(theme) {
+
+        if (theme === "dark") {
+            document.body.classList.add("dark");
+        } else {
+            document.body.classList.remove("dark");
+        }
+    }
+
+
+    // ==========================================
+    // SESSION STORAGE
+    // ==========================================
+
+    function saveSession() {
+
+        let selectedSection =
+            document.getElementById("sectionSelect").value;
+
+        // Save current section
+        sessionStorage.setItem(
+            "lastSection",
+            selectedSection
+        );
+
+        document.getElementById("sessionStatus").innerText =
+            "Active - " + selectedSection;
+
+        updateStorageStatus();
+    }
+
+
+    // ==========================================
+    // RESET LOCAL STORAGE
+    // ==========================================
+
+    function resetPreferences() {
+
+        localStorage.removeItem("username");
+        localStorage.removeItem("theme");
+        localStorage.removeItem("fontSize");
+        localStorage.removeItem("notifications");
+
+        document.getElementById("username").value = "";
+        document.getElementById("theme").value = "light";
+        document.getElementById("fontSize").value = "16px";
+        document.getElementById("notifications").checked = false;
+
+        document.body.classList.remove("dark");
+        document.body.style.fontSize = "16px";
+
+        updateStorageStatus();
+
+        alert("Preferences have been reset.");
+    }
+
+
+    // ==========================================
+    // DISPLAY STORAGE STATUS
+    // ==========================================
+
+    function updateStorageStatus() {
+
+        let username =
+            localStorage.getItem("username");
+
+        let theme =
+            localStorage.getItem("theme");
+
+        if (username || theme) {
+            document.getElementById("localStatus").innerText =
+                "Preferences Saved ✓";
+        } else {
+            document.getElementById("localStatus").innerText =
+                "Not Saved";
+        }
+
+        let section =
+            sessionStorage.getItem("lastSection");
+
+        if (section) {
+            document.getElementById("sessionStatusBox").innerText =
+                "Active - " + section;
+        } else {
+            document.getElementById("sessionStatusBox").innerText =
+                "Active";
+        }
+    }
+
+</script>
+
+</body>
+</html>
+```
